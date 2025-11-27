@@ -45,6 +45,7 @@ class LocationManagerProvider(context: Context) : LocationProvider {
     ) {
         val maximumAge = options.maximumAge?.toLong() ?: Long.MAX_VALUE
         val timeout = options.timeout?.toLong() ?: Long.MAX_VALUE
+        val forceRequestLocation = options.forceRequestLocation ?: false
         
         val provider = getBestProvider(options.accuracy, options.enableHighAccuracy)
         if (provider == null) {
@@ -52,7 +53,17 @@ class LocationManagerProvider(context: Context) : LocationProvider {
             return
         }
         
-        // Try last known location first
+        Log.d(TAG, "getCurrentLocation started (forceRequest: $forceRequestLocation, maximumAge: $maximumAge)")
+        
+        // If forceRequestLocation is true, skip cache and get fresh location immediately
+        // This helps with WiFi-only scenarios where cached location can be very stale
+        if (forceRequestLocation) {
+            Log.d(TAG, "Force requesting fresh location (skipping cache)...")
+            requestSingleUpdate(provider, timeout, onSuccess, onError)
+            return
+        }
+        
+        // Try last known location first (only if not forcing)
         val lastLocation = locationManager.getLastKnownLocation(provider)
         if (lastLocation != null && LocationUtils.getLocationAge(lastLocation) < maximumAge) {
             Log.i(TAG, "Returning cached location")
@@ -61,6 +72,7 @@ class LocationManagerProvider(context: Context) : LocationProvider {
         }
         
         // Request new location
+        Log.d(TAG, "Cached location too old or unavailable, requesting fresh location...")
         requestSingleUpdate(provider, timeout, onSuccess, onError)
     }
     
