@@ -12,9 +12,32 @@
 // Forward declaration of `HybridNitroGeolocationSpec_cxx` to properly resolve imports.
 namespace NitroGeolocation { class HybridNitroGeolocationSpec_cxx; }
 
+// Forward declaration of `GeoPosition` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoPosition; }
+// Forward declaration of `GeoCoordinates` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoCoordinates; }
+// Forward declaration of `GeoOptions` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoOptions; }
+// Forward declaration of `AccuracyAndroid` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AccuracyAndroid; }
+// Forward declaration of `GeoWatchOptions` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoWatchOptions; }
+// Forward declaration of `GeoError` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoError; }
+// Forward declaration of `PositionError` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class PositionError; }
 
-
-
+#include "GeoPosition.hpp"
+#include <NitroModules/Promise.hpp>
+#include "GeoCoordinates.hpp"
+#include <optional>
+#include <string>
+#include "GeoOptions.hpp"
+#include "AccuracyAndroid.hpp"
+#include "GeoWatchOptions.hpp"
+#include <functional>
+#include "GeoError.hpp"
+#include "PositionError.hpp"
 
 #include "NitroGeolocation-Swift-Cxx-Umbrella.hpp"
 
@@ -60,13 +83,43 @@ namespace margelo::nitro::nitrogeolocation {
 
   public:
     // Methods
-    inline double sum(double num1, double num2) override {
-      auto __result = _swiftPart.sum(std::forward<decltype(num1)>(num1), std::forward<decltype(num2)>(num2));
+    inline std::shared_ptr<Promise<GeoPosition>> getCurrentPosition(const GeoOptions& options) override {
+      auto __result = _swiftPart.getCurrentPosition(std::forward<decltype(options)>(options));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
+    }
+    inline void startObserving(const GeoWatchOptions& options) override {
+      auto __result = _swiftPart.startObserving(std::forward<decltype(options)>(options));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline void stopObserving() override {
+      auto __result = _swiftPart.stopObserving();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline void addPositionListener(const std::function<void(const GeoPosition& /* position */)>& callback) override {
+      auto __result = _swiftPart.addPositionListener(callback);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline void addErrorListener(const std::function<void(const GeoError& /* error */)>& callback) override {
+      auto __result = _swiftPart.addErrorListener(callback);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline void removeAllListeners() override {
+      auto __result = _swiftPart.removeAllListeners();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
     }
 
   private:

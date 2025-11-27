@@ -137,6 +137,12 @@ dependencies {
 
   // Add a dependency on NitroModules
   implementation project(":react-native-nitro-modules")
+
+  // Google Play Services Location for FusedLocationProviderClient
+  implementation "com.google.android.gms:play-services-location:21.0.1"
+
+  // Kotlin coroutines for async operations
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 }
 
 if (isNewArchitectureEnabled()) {

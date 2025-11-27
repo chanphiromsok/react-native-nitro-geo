@@ -10,6 +10,7 @@ package com.margelo.nitro.nitrogeolocation
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -47,7 +48,37 @@ abstract class HybridNitroGeolocationSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun sum(num1: Double, num2: Double): Double
+  abstract fun getCurrentPosition(options: GeoOptions): Promise<GeoPosition>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun startObserving(options: GeoWatchOptions): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun stopObserving(): Unit
+  
+  abstract fun addPositionListener(callback: (position: GeoPosition) -> Unit): Unit
+  
+  @DoNotStrip
+  @Keep
+  private fun addPositionListener_cxx(callback: Func_void_GeoPosition): Unit {
+    val __result = addPositionListener(callback)
+    return __result
+  }
+  
+  abstract fun addErrorListener(callback: (error: GeoError) -> Unit): Unit
+  
+  @DoNotStrip
+  @Keep
+  private fun addErrorListener_cxx(callback: Func_void_GeoError): Unit {
+    val __result = addErrorListener(callback)
+    return __result
+  }
+  
+  @DoNotStrip
+  @Keep
+  abstract fun removeAllListeners(): Unit
 
   private external fun initHybrid(): HybridData
 

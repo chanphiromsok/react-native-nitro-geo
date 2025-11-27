@@ -7,9 +7,43 @@
 
 #include "JHybridNitroGeolocationSpec.hpp"
 
+// Forward declaration of `GeoPosition` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoPosition; }
+// Forward declaration of `GeoCoordinates` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoCoordinates; }
+// Forward declaration of `GeoOptions` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoOptions; }
+// Forward declaration of `AccuracyAndroid` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AccuracyAndroid; }
+// Forward declaration of `GeoWatchOptions` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoWatchOptions; }
+// Forward declaration of `GeoError` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoError; }
+// Forward declaration of `PositionError` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class PositionError; }
 
-
-
+#include "GeoPosition.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
+#include "JGeoPosition.hpp"
+#include "GeoCoordinates.hpp"
+#include "JGeoCoordinates.hpp"
+#include <optional>
+#include <string>
+#include "GeoOptions.hpp"
+#include "JGeoOptions.hpp"
+#include "AccuracyAndroid.hpp"
+#include "JAccuracyAndroid.hpp"
+#include "GeoWatchOptions.hpp"
+#include "JGeoWatchOptions.hpp"
+#include <functional>
+#include "JFunc_void_GeoPosition.hpp"
+#include <NitroModules/JNICallable.hpp>
+#include "GeoError.hpp"
+#include "JFunc_void_GeoError.hpp"
+#include "JGeoError.hpp"
+#include "PositionError.hpp"
+#include "JPositionError.hpp"
 
 namespace margelo::nitro::nitrogeolocation {
 
@@ -43,10 +77,41 @@ namespace margelo::nitro::nitrogeolocation {
   
 
   // Methods
-  double JHybridNitroGeolocationSpec::sum(double num1, double num2) {
-    static const auto method = javaClassStatic()->getMethod<double(double /* num1 */, double /* num2 */)>("sum");
-    auto __result = method(_javaPart, num1, num2);
-    return __result;
+  std::shared_ptr<Promise<GeoPosition>> JHybridNitroGeolocationSpec::getCurrentPosition(const GeoOptions& options) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JGeoOptions> /* options */)>("getCurrentPosition");
+    auto __result = method(_javaPart, JGeoOptions::fromCpp(options));
+    return [&]() {
+      auto __promise = Promise<GeoPosition>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JGeoPosition>(__boxedResult);
+        __promise->resolve(__result->toCpp());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  void JHybridNitroGeolocationSpec::startObserving(const GeoWatchOptions& options) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JGeoWatchOptions> /* options */)>("startObserving");
+    method(_javaPart, JGeoWatchOptions::fromCpp(options));
+  }
+  void JHybridNitroGeolocationSpec::stopObserving() {
+    static const auto method = javaClassStatic()->getMethod<void()>("stopObserving");
+    method(_javaPart);
+  }
+  void JHybridNitroGeolocationSpec::addPositionListener(const std::function<void(const GeoPosition& /* position */)>& callback) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_GeoPosition::javaobject> /* callback */)>("addPositionListener_cxx");
+    method(_javaPart, JFunc_void_GeoPosition_cxx::fromCpp(callback));
+  }
+  void JHybridNitroGeolocationSpec::addErrorListener(const std::function<void(const GeoError& /* error */)>& callback) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_GeoError::javaobject> /* callback */)>("addErrorListener_cxx");
+    method(_javaPart, JFunc_void_GeoError_cxx::fromCpp(callback));
+  }
+  void JHybridNitroGeolocationSpec::removeAllListeners() {
+    static const auto method = javaClassStatic()->getMethod<void()>("removeAllListeners");
+    method(_javaPart);
   }
 
 } // namespace margelo::nitro::nitrogeolocation

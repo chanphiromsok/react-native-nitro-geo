@@ -54,7 +54,12 @@ namespace margelo::nitro::nitrogeolocation {
 
   public:
     // Methods
-    double sum(double num1, double num2) override;
+    std::shared_ptr<Promise<GeoPosition>> getCurrentPosition(const GeoOptions& options) override;
+    void startObserving(const GeoWatchOptions& options) override;
+    void stopObserving() override;
+    void addPositionListener(const std::function<void(const GeoPosition& /* position */)>& callback) override;
+    void addErrorListener(const std::function<void(const GeoError& /* error */)>& callback) override;
+    void removeAllListeners() override;
 
   private:
     friend HybridBase;

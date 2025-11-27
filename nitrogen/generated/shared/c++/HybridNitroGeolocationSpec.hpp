@@ -13,9 +13,21 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
+// Forward declaration of `GeoPosition` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoPosition; }
+// Forward declaration of `GeoOptions` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoOptions; }
+// Forward declaration of `GeoWatchOptions` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoWatchOptions; }
+// Forward declaration of `GeoError` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoError; }
 
-
-
+#include "GeoPosition.hpp"
+#include <NitroModules/Promise.hpp>
+#include "GeoOptions.hpp"
+#include "GeoWatchOptions.hpp"
+#include <functional>
+#include "GeoError.hpp"
 
 namespace margelo::nitro::nitrogeolocation {
 
@@ -48,7 +60,12 @@ namespace margelo::nitro::nitrogeolocation {
 
     public:
       // Methods
-      virtual double sum(double num1, double num2) = 0;
+      virtual std::shared_ptr<Promise<GeoPosition>> getCurrentPosition(const GeoOptions& options) = 0;
+      virtual void startObserving(const GeoWatchOptions& options) = 0;
+      virtual void stopObserving() = 0;
+      virtual void addPositionListener(const std::function<void(const GeoPosition& /* position */)>& callback) = 0;
+      virtual void addErrorListener(const std::function<void(const GeoError& /* error */)>& callback) = 0;
+      virtual void removeAllListeners() = 0;
 
     protected:
       // Hybrid Setup

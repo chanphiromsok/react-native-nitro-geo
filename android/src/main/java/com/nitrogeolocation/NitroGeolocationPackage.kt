@@ -1,20 +1,24 @@
-package com.nitrogeolocation;
+package com.nitrogeolocation
 
-import com.facebook.react.bridge.NativeModule;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.module.model.ReactModuleInfoProvider;
-import com.facebook.react.TurboReactPackage;
-import com.margelo.nitro.nitrogeolocation.NitroGeolocationOnLoad;
+import com.facebook.react.BaseReactPackage
+import com.facebook.react.bridge.NativeModule
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.module.model.ReactModuleInfoProvider
+import com.margelo.nitro.nitrogeolocation.NitroGeolocationOnLoad
 
 
-public class NitroGeolocationPackage : TurboReactPackage() {
-  override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? = null
+class NitroGeolocationPackage : BaseReactPackage() {
+  override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
+    // Set the static context for HybridNitroGeolocation when the package is loaded
+//    HybridNitroGeolocation.appContext = reactContext.applicationContext
+    return null
+  }
 
   override fun getReactModuleInfoProvider(): ReactModuleInfoProvider = ReactModuleInfoProvider { emptyMap() }
 
   companion object {
     init {
-      NitroGeolocationOnLoad.initializeNative();
+      NitroGeolocationOnLoad.initializeNative()
     }
   }
 }

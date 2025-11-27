@@ -14,7 +14,12 @@ public protocol HybridNitroGeolocationSpec_protocol: HybridObject {
   
 
   // Methods
-  func sum(num1: Double, num2: Double) throws -> Double
+  func getCurrentPosition(options: GeoOptions) throws -> Promise<GeoPosition>
+  func startObserving(options: GeoWatchOptions) throws -> Void
+  func stopObserving() throws -> Void
+  func addPositionListener(callback: @escaping (_ position: GeoPosition) -> Void) throws -> Void
+  func addErrorListener(callback: @escaping (_ error: GeoError) -> Void) throws -> Void
+  func removeAllListeners() throws -> Void
 }
 
 public extension HybridNitroGeolocationSpec_protocol {

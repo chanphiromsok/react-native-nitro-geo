@@ -1,5 +1,124 @@
 import { NitroModules } from 'react-native-nitro-modules'
-import type { NitroGeolocation as NitroGeolocationSpec } from './specs/nitro-geolocation.nitro'
+import type { 
+  NitroGeolocation as NitroGeolocationSpec,
+  GeoPosition,
+  GeoCoordinates,
+  GeoOptions,
+  GeoWatchOptions,
+  GeoError,
+  AccuracyAndroid,
+  SuccessCallback,
+  ErrorCallback,
+} from './specs/nitro-geolocation.nitro'
+import { PositionError } from './specs/nitro-geolocation.nitro'
 
-export const NitroGeolocation =
-  NitroModules.createHybridObject<NitroGeolocationSpec>('NitroGeolocation')
+// Export all types
+export type {
+  NitroGeolocationSpec,
+  GeoPosition,
+  GeoCoordinates,
+  GeoOptions,
+  GeoWatchOptions,
+  GeoError,
+  AccuracyAndroid,
+  SuccessCallback,
+  ErrorCallback,
+}
+
+export { PositionError }
+
+// Create the hybrid object
+const nitroGeolocation = NitroModules.createHybridObject<NitroGeolocationSpec>('NitroGeolocation')
+
+// Watch ID counter
+let nextWatchId = 0
+const watchCallbacks = new Map<number, { success: SuccessCallback; error?: ErrorCallback }>()
+
+/**
+ * Geolocation API compatible with react-native-geolocation-service
+ */
+export const Geolocation = {
+  /**
+   * Get the current position
+   * @param success - Success callback with position
+   * @param error - Error callback
+   * @param options - Position options
+   */
+  getCurrentPosition: (
+    success: SuccessCallback,
+    error?: ErrorCallback,
+    options: GeoOptions = {}
+  ): void => {
+    nitroGeolocation
+      .getCurrentPosition(options)
+      .then(success)
+      .catch((e: Error) => {
+        if (error) {
+          error({
+            code: PositionError.INTERNAL_ERROR,
+            message: e.message || 'Unknown error',
+          })
+        }
+      })
+  },
+
+  /**
+   * Watch position changes
+   * @param success - Success callback with position
+   * @param error - Error callback
+   * @param options - Watch options
+   * @returns Watch ID
+   */
+  watchPosition: (
+    success: SuccessCallback,
+    error?: ErrorCallback,
+    options: GeoWatchOptions = {}
+  ): number => {
+    const watchId = nextWatchId++
+    
+    // Store callbacks
+    watchCallbacks.set(watchId, { success, error })
+
+    // Add listeners
+    nitroGeolocation.addPositionListener(success)
+    if (error) {
+      nitroGeolocation.addErrorListener(error)
+    }
+
+    // Start observing if this is the first watcher
+    if (watchCallbacks.size === 1) {
+      nitroGeolocation.startObserving(options)
+    }
+
+    return watchId
+  },
+
+  /**
+   * Clear a position watch
+   * @param watchId - The watch ID returned by watchPosition
+   */
+  clearWatch: (watchId: number): void => {
+    watchCallbacks.delete(watchId)
+
+    // If no more watchers, stop observing
+    if (watchCallbacks.size === 0) {
+      nitroGeolocation.stopObserving()
+      nitroGeolocation.removeAllListeners()
+    }
+  },
+
+  /**
+   * Stop all position observations
+   */
+  stopObserving: (): void => {
+    watchCallbacks.clear()
+    nitroGeolocation.stopObserving()
+    nitroGeolocation.removeAllListeners()
+  },
+}
+
+// Export the raw hybrid object for advanced usage
+export const NitroGeolocation = nitroGeolocation
+
+// Default export for convenience
+export default Geolocation

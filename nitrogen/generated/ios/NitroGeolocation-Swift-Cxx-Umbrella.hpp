@@ -8,14 +8,39 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `AccuracyAndroid` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AccuracyAndroid; }
+// Forward declaration of `GeoCoordinates` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoCoordinates; }
+// Forward declaration of `GeoError` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoError; }
+// Forward declaration of `GeoOptions` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoOptions; }
+// Forward declaration of `GeoPosition` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoPosition; }
+// Forward declaration of `GeoWatchOptions` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { struct GeoWatchOptions; }
 // Forward declaration of `HybridNitroGeolocationSpec` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { class HybridNitroGeolocationSpec; }
+// Forward declaration of `PositionError` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class PositionError; }
 
 // Include C++ defined types
+#include "AccuracyAndroid.hpp"
+#include "GeoCoordinates.hpp"
+#include "GeoError.hpp"
+#include "GeoOptions.hpp"
+#include "GeoPosition.hpp"
+#include "GeoWatchOptions.hpp"
 #include "HybridNitroGeolocationSpec.hpp"
+#include "PositionError.hpp"
+#include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
+#include <functional>
 #include <memory>
+#include <optional>
+#include <string>
 
 // C++ helpers for Swift
 #include "NitroGeolocation-Swift-Cxx-Bridge.hpp"

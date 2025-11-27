@@ -118,14 +118,86 @@ open class HybridNitroGeolocationSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func sum(num1: Double, num2: Double) -> bridge.Result_double_ {
+  public final func getCurrentPosition(options: GeoOptions) -> bridge.Result_std__shared_ptr_Promise_GeoPosition___ {
     do {
-      let __result = try self.__implementation.sum(num1: num1, num2: num2)
-      let __resultCpp = __result
-      return bridge.create_Result_double_(__resultCpp)
+      let __result = try self.__implementation.getCurrentPosition(options: options)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_GeoPosition__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_GeoPosition__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_GeoPosition__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_GeoPosition___(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_double_(__exceptionPtr)
+      return bridge.create_Result_std__shared_ptr_Promise_GeoPosition___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func startObserving(options: GeoWatchOptions) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.startObserving(options: options)
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func stopObserving() -> bridge.Result_void_ {
+    do {
+      try self.__implementation.stopObserving()
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func addPositionListener(callback: bridge.Func_void_GeoPosition) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.addPositionListener(callback: { () -> (GeoPosition) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_GeoPosition(callback)
+        return { (__position: GeoPosition) -> Void in
+          __wrappedFunction.call(__position)
+        }
+      }())
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func addErrorListener(callback: bridge.Func_void_GeoError) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.addErrorListener(callback: { () -> (GeoError) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_GeoError(callback)
+        return { (__error: GeoError) -> Void in
+          __wrappedFunction.call(__error)
+        }
+      }())
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func removeAllListeners() -> bridge.Result_void_ {
+    do {
+      try self.__implementation.removeAllListeners()
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
     }
   }
 }
