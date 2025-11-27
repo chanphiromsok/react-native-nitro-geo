@@ -1,6 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, Platform, PermissionsAndroid, Alert, ScrollView } from 'react-native';
-import { Geolocation, GeoPosition, PositionError } from 'react-native-nitro-geolocation';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  Platform,
+  PermissionsAndroid,
+  Alert,
+  ScrollView,
+  ToastAndroid,
+  TouchableOpacity,
+} from 'react-native';
+import {
+  Geolocation,
+  GeoPosition,
+  NitroGeolocation,
+  PositionError,
+} from 'react-native-nitro-geolocation';
 
 function App(): React.JSX.Element {
   const [location, setLocation] = useState<GeoPosition | null>(null);
@@ -20,7 +36,7 @@ function App(): React.JSX.Element {
             buttonNeutral: 'Ask Me Later',
             buttonNegative: 'Cancel',
             buttonPositive: 'OK',
-          }
+          },
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
@@ -32,6 +48,17 @@ function App(): React.JSX.Element {
   };
 
   const getCurrentPosition = async () => {
+    NitroGeolocation.getCurrentPosition({ accuracy: 'high' })
+      .then(position => {
+        ToastAndroid.show(
+          `Position: ${position.coords.latitude}, ${position.coords.longitude}`,
+          ToastAndroid.LONG,
+        );
+      })
+      .catch(err => {
+        console.log('Error:', err);
+        setError(`Error ${err.code}: ${err.message}`);
+      });
     const hasPermission = await requestLocationPermission();
     if (!hasPermission) {
       setError('Location permission denied');
@@ -40,12 +67,12 @@ function App(): React.JSX.Element {
 
     setError(null);
     Geolocation.getCurrentPosition(
-      (position) => {
+      position => {
         console.log('Position:', position);
         setLocation(position);
         setError(null);
       },
-      (err) => {
+      err => {
         console.log('Error:', err);
         setError(`Error ${err.code}: ${err.message}`);
       },
@@ -53,71 +80,20 @@ function App(): React.JSX.Element {
         enableHighAccuracy: true,
         timeout: 15000,
         maximumAge: 10000,
-      }
+      },
     );
   };
-
-  const startWatching = async () => {
-    const hasPermission = await requestLocationPermission();
-    if (!hasPermission) {
-      setError('Location permission denied');
-      return;
-    }
-
-    setError(null);
-    const id = Geolocation.watchPosition(
-      (position) => {
-        console.log('Watch Position:', position);
-        setLocation(position);
-        setError(null);
-      },
-      (err) => {
-        console.log('Watch Error:', err);
-        setError(`Error ${err.code}: ${err.message}`);
-      },
-      {
-        enableHighAccuracy: true,
-        distanceFilter: 10,
-        interval: 5000,
-        fastestInterval: 2000,
-      }
-    );
-    setWatchId(id);
-    setIsWatching(true);
-  };
-
-  const stopWatching = () => {
-    if (watchId !== null) {
-      Geolocation.clearWatch(watchId);
-      setWatchId(null);
-      setIsWatching(false);
-    }
-  };
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (watchId !== null) {
-        Geolocation.clearWatch(watchId);
-      }
-    };
-  }, [watchId]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Nitro Geolocation Demo</Text>
-      
-      <View style={styles.buttonContainer}>
-        <Button title="Get Current Position" onPress={getCurrentPosition} />
-      </View>
-      
-      <View style={styles.buttonContainer}>
-        {!isWatching ? (
-          <Button title="Start Watching" onPress={startWatching} />
-        ) : (
-          <Button title="Stop Watching" onPress={stopWatching} color="red" />
-        )}
-      </View>
+
+      <TouchableOpacity
+        style={styles.buttonContainer}
+        onPress={getCurrentPosition}
+      >
+        <Text>Get Current Position</Text>
+      </TouchableOpacity>
 
       {error && (
         <View style={styles.errorContainer}>
@@ -128,20 +104,36 @@ function App(): React.JSX.Element {
       {location && (
         <View style={styles.locationContainer}>
           <Text style={styles.sectionTitle}>📍 Location</Text>
-          <Text style={styles.text}>Latitude: {location.coords.latitude.toFixed(6)}</Text>
-          <Text style={styles.text}>Longitude: {location.coords.longitude.toFixed(6)}</Text>
-          <Text style={styles.text}>Accuracy: {location.coords.accuracy.toFixed(1)} m</Text>
+          <Text style={styles.text}>
+            Latitude: {location.coords.latitude.toFixed(6)}
+          </Text>
+          <Text style={styles.text}>
+            Longitude: {location.coords.longitude.toFixed(6)}
+          </Text>
+          <Text style={styles.text}>
+            Accuracy: {location.coords.accuracy.toFixed(1)} m
+          </Text>
           {location.coords.altitude !== undefined && (
-            <Text style={styles.text}>Altitude: {location.coords.altitude.toFixed(1)} m</Text>
+            <Text style={styles.text}>
+              Altitude: {location.coords.altitude.toFixed(1)} m
+            </Text>
           )}
           {location.coords.speed !== undefined && (
-            <Text style={styles.text}>Speed: {location.coords.speed.toFixed(1)} m/s</Text>
+            <Text style={styles.text}>
+              Speed: {location.coords.speed.toFixed(1)} m/s
+            </Text>
           )}
           {location.coords.heading !== undefined && (
-            <Text style={styles.text}>Heading: {location.coords.heading.toFixed(1)}°</Text>
+            <Text style={styles.text}>
+              Heading: {location.coords.heading.toFixed(1)}°
+            </Text>
           )}
-          <Text style={styles.text}>Provider: {location.provider ?? 'Unknown'}</Text>
-          <Text style={styles.text}>Mocked: {location.mocked ? 'Yes' : 'No'}</Text>
+          <Text style={styles.text}>
+            Provider: {location.provider ?? 'Unknown'}
+          </Text>
+          <Text style={styles.text}>
+            Mocked: {location.mocked ? 'Yes' : 'No'}
+          </Text>
           <Text style={styles.textSmall}>
             Timestamp: {new Date(location.timestamp).toLocaleString()}
           </Text>

@@ -1,5 +1,5 @@
 import { NitroModules } from 'react-native-nitro-modules'
-import type { 
+import type {
   NitroGeolocation as NitroGeolocationSpec,
   GeoPosition,
   GeoCoordinates,
@@ -28,11 +28,15 @@ export type {
 export { PositionError }
 
 // Create the hybrid object
-const nitroGeolocation = NitroModules.createHybridObject<NitroGeolocationSpec>('NitroGeolocation')
+const NitroGeolocation =
+  NitroModules.createHybridObject<NitroGeolocationSpec>('NitroGeolocation')
 
 // Watch ID counter
 let nextWatchId = 0
-const watchCallbacks = new Map<number, { success: SuccessCallback; error?: ErrorCallback }>()
+const watchCallbacks = new Map<
+  number,
+  { success: SuccessCallback; error?: ErrorCallback }
+>()
 
 /**
  * Geolocation API compatible with react-native-geolocation-service
@@ -49,8 +53,7 @@ export const Geolocation = {
     error?: ErrorCallback,
     options: GeoOptions = {}
   ): void => {
-    nitroGeolocation
-      .getCurrentPosition(options)
+    NitroGeolocation.getCurrentPosition(options)
       .then(success)
       .catch((e: Error) => {
         if (error) {
@@ -75,19 +78,19 @@ export const Geolocation = {
     options: GeoWatchOptions = {}
   ): number => {
     const watchId = nextWatchId++
-    
+
     // Store callbacks
     watchCallbacks.set(watchId, { success, error })
 
     // Add listeners
-    nitroGeolocation.addPositionListener(success)
+    NitroGeolocation.addPositionListener(success)
     if (error) {
-      nitroGeolocation.addErrorListener(error)
+      NitroGeolocation.addErrorListener(error)
     }
 
     // Start observing if this is the first watcher
     if (watchCallbacks.size === 1) {
-      nitroGeolocation.startObserving(options)
+      NitroGeolocation.startObserving(options)
     }
 
     return watchId
@@ -102,8 +105,8 @@ export const Geolocation = {
 
     // If no more watchers, stop observing
     if (watchCallbacks.size === 0) {
-      nitroGeolocation.stopObserving()
-      nitroGeolocation.removeAllListeners()
+      NitroGeolocation.stopObserving()
+      NitroGeolocation.removeAllListeners()
     }
   },
 
@@ -112,13 +115,13 @@ export const Geolocation = {
    */
   stopObserving: (): void => {
     watchCallbacks.clear()
-    nitroGeolocation.stopObserving()
-    nitroGeolocation.removeAllListeners()
+    NitroGeolocation.stopObserving()
+    NitroGeolocation.removeAllListeners()
   },
 }
 
 // Export the raw hybrid object for advanced usage
-export const NitroGeolocation = nitroGeolocation
+export { NitroGeolocation }
 
 // Default export for convenience
 export default Geolocation
