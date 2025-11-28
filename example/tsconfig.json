@@ -6,7 +6,7 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "react-native-nitro-geolocation": ["../src"]
+      "react-native-nitro-geo": ["../src"]
     }
   }
 }

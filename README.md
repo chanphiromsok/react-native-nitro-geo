@@ -1,4 +1,4 @@
-# react-native-nitro-geolocation
+# react-native-nitro-geo
 
 A high-performance geolocation library for React Native, built with [Nitro Modules](https://github.com/mrousavy/nitro). This is a modern replacement for react-native-geolocation-service with improved performance and type safety.
 
@@ -21,7 +21,7 @@ A high-performance geolocation library for React Native, built with [Nitro Modul
 ## Installation
 
 ```bash
-npm install react-native-nitro-geolocation react-native-nitro-modules
+npm install react-native-nitro-geo react-native-nitro-modules
 ```
 
 ### iOS Setup
@@ -57,7 +57,7 @@ Add permissions to your `AndroidManifest.xml`:
 ### Request Authorization (iOS) / Check Permission (Android)
 
 ```typescript
-import { NitroGeolocation } from 'react-native-nitro-geolocation'
+import { NitroGeolocation } from 'react-native-nitro-geo'
 
 // Request authorization - on iOS this shows the permission dialog
 // On Android, this only checks the current permission status
@@ -72,7 +72,7 @@ if (result !== 'granted') {
 ### Get Current Position
 
 ```typescript
-import { NitroGeolocation } from 'react-native-nitro-geolocation'
+import { NitroGeolocation } from 'react-native-nitro-geo'
 
 try {
   const position = await NitroGeolocation.getCurrentPosition({
@@ -92,7 +92,7 @@ try {
 ### Watch Position
 
 ```typescript
-import { NitroGeolocation } from 'react-native-nitro-geolocation'
+import { NitroGeolocation } from 'react-native-nitro-geo'
 
 // Add listeners
 NitroGeolocation.addPositionListener((position) => {
@@ -202,8 +202,8 @@ This library is designed as a drop-in replacement with similar API:
 import Geolocation from 'react-native-geolocation-service'
 Geolocation.getCurrentPosition(successCallback, errorCallback, options)
 
-// After (react-native-nitro-geolocation)
-import { NitroGeolocation } from 'react-native-nitro-geolocation'
+// After (react-native-nitro-geo)
+import { NitroGeolocation } from 'react-native-nitro-geo'
 const position = await NitroGeolocation.getCurrentPosition(options)
 ```
 

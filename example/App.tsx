@@ -16,7 +16,7 @@ import {
   GeoPosition,
   NitroGeolocation,
   PositionError,
-} from 'react-native-nitro-geolocation';
+} from 'react-native-nitro-geo';
 
 function App(): React.JSX.Element {
   const [location, setLocation] = useState<GeoPosition | null>(null);

@@ -1,13 +1,12 @@
 {
-  "name": "react-native-nitro-geolocation",
+  "name": "react-native-geo",
   "version": "0.1.0",
-  "description": "react-native-nitro-geolocation is a react native package built with Nitro",
+  "description": "react-native-nitro-geo is a react native package built with Nitro",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
-  "private": true,
   "scripts": {
     "typecheck": "tsc --noEmit",
     "clean": "git clean -dfX",
@@ -17,7 +16,7 @@
   },
   "keywords": [
     "react-native",
-    "react-native-nitro-geolocation"
+    "react-native-nitro-geo"
   ],
   "files": [
     "src",
@@ -43,11 +42,11 @@
   "workspaces": [
     "example"
   ],
-  "repository": "https://github.com/rom/react-native-nitro-geolocation.git",
+  "repository": "https://github.com/rom/react-native-nitro-geo.git",
   "author": "Rom",
   "license": "MIT",
-  "bugs": "https://github.com/rom/react-native-nitro-geolocation/issues",
-  "homepage": "https://github.com/rom/react-native-nitro-geolocation#readme",
+  "bugs": "https://github.com/rom/react-native-nitro-geo/issues",
+  "homepage": "https://github.com/rom/react-native-nitro-geo#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
