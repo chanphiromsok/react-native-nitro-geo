@@ -1,6 +1,6 @@
 {
   "name": "react-native-geo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "react-native-nitro-geo is a react native package built with Nitro",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -42,11 +42,11 @@
   "workspaces": [
     "example"
   ],
-  "repository": "https://github.com/rom/react-native-nitro-geo.git",
+  "repository": "https://github.com/chanphiromsok/react-native-nitro-geo.git",
   "author": "Rom",
   "license": "MIT",
-  "bugs": "https://github.com/rom/react-native-nitro-geo/issues",
-  "homepage": "https://github.com/rom/react-native-nitro-geo#readme",
+  "bugs": "https://github.com/chanphiromsok/react-native-nitro-geo/issues",
+  "homepage": "https://github.com/chanphiromsok/react-native-nitro-geo#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
