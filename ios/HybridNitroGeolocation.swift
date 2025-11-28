@@ -111,94 +111,99 @@ class HybridNitroGeolocation: HybridNitroGeolocationSpec {
     func requestAuthorization(level: AuthorizationLevel) throws -> Promise<AuthorizationResult> {
         log("requestAuthorization called with level: \(level)")
         
-        let promise = Promise<AuthorizationResult>()
-        let locationManager = CLLocationManager()
-        
-        // Check if location services are enabled
+        // Check if location services are enabled first
         if !CLLocationManager.locationServicesEnabled() {
             log("Location services disabled")
-            promise.resolve(withResult: .disabled)
-            return promise
+            return Promise.resolved(withResult: .disabled)
         }
         
         // Check current authorization status (iOS 13 compatible)
         let currentStatus: CLAuthorizationStatus
         if #available(iOS 14.0, *) {
-            currentStatus = locationManager.authorizationStatus
+            currentStatus = CLLocationManager().authorizationStatus
         } else {
             currentStatus = CLLocationManager.authorizationStatus()
         }
         
-        switch currentStatus {
-        case .authorizedAlways:
-            log("Already authorized always")
-            promise.resolve(withResult: .granted)
-            
-        case .authorizedWhenInUse:
-            if level == .wheninuse {
-                log("Already authorized when in use")
-                promise.resolve(withResult: .granted)
-            } else {
-                // Need to upgrade to always - request it
-                log("Need to upgrade to always authorization")
-                requestAuthorizationInternal(level: level, locationManager: locationManager, promise: promise)
+        // Determine result from current status
+        let immediateResult: AuthorizationResult? = {
+            switch currentStatus {
+            case .authorizedAlways:
+                log("Already authorized always")
+                return .granted
+                
+            case .authorizedWhenInUse:
+                if level == .wheninuse {
+                    log("Already authorized when in use")
+                    return .granted
+                }
+                return nil // Need to upgrade to always
+                
+            case .denied:
+                log("Authorization denied")
+                return .denied
+                
+            case .restricted:
+                log("Authorization restricted")
+                return .restricted
+                
+            case .notDetermined:
+                return nil // Need to request
+                
+            @unknown default:
+                log("Unknown authorization status")
+                return .denied
             }
-            
-        case .denied:
-            log("Authorization denied")
-            promise.resolve(withResult: .denied)
-            
-        case .restricted:
-            log("Authorization restricted")
-            promise.resolve(withResult: .restricted)
-            
-        case .notDetermined:
-            log("Authorization not determined, requesting...")
-            requestAuthorizationInternal(level: level, locationManager: locationManager, promise: promise)
-            
-        @unknown default:
-            log("Unknown authorization status")
-            promise.resolve(withResult: .denied)
+        }()
+        
+        // Return immediately if we have a result
+        if let result = immediateResult {
+            return Promise.resolved(withResult: result)
         }
         
-        return promise
+        // Need to request authorization - use async pattern
+        log("Requesting authorization...")
+        return Promise.async { [weak self] in
+            try await withCheckedThrowingContinuation { continuation in
+                self?.requestAuthorizationWithContinuation(level: level, continuation: continuation)
+            }
+        }
     }
     
     private var authorizationDelegate: AuthorizationDelegate?
     private var authorizationLocationManager: CLLocationManager? // Keep strong reference to prevent deallocation
     
-    private func requestAuthorizationInternal(
+    private func requestAuthorizationWithContinuation(
         level: AuthorizationLevel,
-        locationManager: CLLocationManager,
-        promise: Promise<AuthorizationResult>
+        continuation: CheckedContinuation<AuthorizationResult, Error>
     ) {
+        let locationManager = CLLocationManager()
+        
         // Create a delegate to handle the authorization callback
         let delegate = AuthorizationDelegate { [weak self] status in
             self?.log("Authorization callback received: \(status.rawValue)")
             
+            let result: AuthorizationResult
             switch status {
             case .authorizedAlways:
-                promise.resolve(withResult: .granted)
+                result = .granted
             case .authorizedWhenInUse:
-                if level == .wheninuse {
-                    promise.resolve(withResult: .granted)
-                } else {
-                    promise.resolve(withResult: .denied)
-                }
+                result = (level == .wheninuse) ? .granted : .denied
             case .denied:
-                promise.resolve(withResult: .denied)
+                result = .denied
             case .restricted:
-                promise.resolve(withResult: .restricted)
+                result = .restricted
             case .notDetermined:
-                // Shouldn't happen after requesting
-                promise.resolve(withResult: .denied)
+                result = .denied
             @unknown default:
-                promise.resolve(withResult: .denied)
+                result = .denied
             }
             
-            // Clean up the delegate and location manager references
+            // Clean up references
             self?.authorizationDelegate = nil
             self?.authorizationLocationManager = nil
+            
+            continuation.resume(returning: result)
         }
         
         // Keep strong references to prevent deallocation before callback
@@ -217,30 +222,28 @@ class HybridNitroGeolocation: HybridNitroGeolocationSpec {
     func getCurrentPosition(options: GeoOptions) throws -> Promise<GeoPosition> {
         log("getCurrentPosition called")
         
-        // Check permissions - return rejected promise with proper error instead of throwing
+        // Check permissions first - return rejected promise
         if !LocationUtils.hasLocationPermission() {
             log("Location permission not granted")
-            let promise = Promise<GeoPosition>()
-            let error = GeoError(code: .permissionDenied, message: "Location permission not granted. Call requestAuthorization() first.")
-            promise.reject(withError: RuntimeError.error(withMessage: error.message))
-            return promise
+            return Promise.rejected(withError: RuntimeError.error(withMessage: "Location permission not granted. Call requestAuthorization() first."))
         }
         
         let provider = getLocationProvider()
-        let promise = Promise<GeoPosition>()
         
-        provider.getCurrentLocation(
-            options: options,
-            onSuccess: { location in
-                let position = LocationUtils.locationToGeoPosition(location)
-                promise.resolve(withResult: position)
-            },
-            onError: { error in
-                promise.reject(withError: RuntimeError.error(withMessage: error.message))
+        return Promise.async {
+            try await withCheckedThrowingContinuation { continuation in
+                provider.getCurrentLocation(
+                    options: options,
+                    onSuccess: { location in
+                        let position = LocationUtils.locationToGeoPosition(location)
+                        continuation.resume(returning: position)
+                    },
+                    onError: { error in
+                        continuation.resume(throwing: RuntimeError.error(withMessage: error.message))
+                    }
+                )
             }
-        )
-        
-        return promise
+        }
     }
     
     func startObserving(options: GeoWatchOptions) throws {
