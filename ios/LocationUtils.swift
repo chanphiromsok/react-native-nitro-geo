@@ -24,17 +24,22 @@ struct LocationUtils {
             return false
         }
         
-        let status = CLLocationManager().authorizationStatus
+        let status = getAuthorizationStatus()
         return status == .authorizedWhenInUse || status == .authorizedAlways
     }
     
     /**
      * Get the authorization status for location services.
+     * Compatible with iOS 13 and iOS 14+
      *
      * - Returns: The current authorization status
      */
     static func getAuthorizationStatus() -> CLAuthorizationStatus {
-        return CLLocationManager().authorizationStatus
+        if #available(iOS 14.0, *) {
+            return CLLocationManager().authorizationStatus
+        } else {
+            return CLLocationManager.authorizationStatus()
+        }
     }
     
     /**

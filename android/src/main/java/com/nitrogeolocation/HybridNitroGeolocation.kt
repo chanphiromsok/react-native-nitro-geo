@@ -14,6 +14,11 @@ import com.margelo.nitro.NitroModules
 import com.margelo.nitro.core.Promise
 import com.margelo.nitro.nitrogeolocation.*
 
+/**
+ * Custom exception for permission denied errors
+ */
+class PermissionDeniedException(message: String) : Exception(message)
+
 @DoNotStrip
 @Keep
 class HybridNitroGeolocation : HybridNitroGeolocationSpec() {
@@ -118,7 +123,7 @@ class HybridNitroGeolocation : HybridNitroGeolocationSpec() {
 //        println(fusedProvider)
         return Promise.async {
             if (!LocationUtils.hasLocationPermission(context)) {
-                throw Exception("Location permission not granted")
+                throw PermissionDeniedException("Location permission not granted. Call requestAuthorization() first or request permission via PermissionsAndroid.")
             }
 
             val forceLocationManager = options.forceLocationManager ?: false

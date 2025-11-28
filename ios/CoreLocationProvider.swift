@@ -120,12 +120,26 @@ class CoreLocationProvider: NSObject, LocationProvider {
     // MARK: - Private Methods
     
     private func configureLocationManager(options: GeoOptions) {
-        // Set accuracy based on enableHighAccuracy flag
-        let enableHighAccuracy = options.enableHighAccuracy ?? false
-        if enableHighAccuracy {
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        // Set accuracy - check accuracy enum first, then fall back to enableHighAccuracy
+        if let accuracy = options.accuracy {
+            switch accuracy {
+            case .high:
+                locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            case .balanced:
+                locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            case .low:
+                locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+            case .passive:
+                locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+            }
         } else {
-            locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+            // Fall back to enableHighAccuracy boolean
+            let enableHighAccuracy = options.enableHighAccuracy ?? false
+            if enableHighAccuracy {
+                locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            } else {
+                locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+            }
         }
         
         // Set distance filter
@@ -139,12 +153,26 @@ class CoreLocationProvider: NSObject, LocationProvider {
     }
     
     private func configureLocationManager(watchOptions options: GeoWatchOptions) {
-        // Set accuracy based on enableHighAccuracy flag
-        let enableHighAccuracy = options.enableHighAccuracy ?? false
-        if enableHighAccuracy {
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        // Set accuracy - check accuracy enum first, then fall back to enableHighAccuracy
+        if let accuracy = options.accuracy {
+            switch accuracy {
+            case .high:
+                locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            case .balanced:
+                locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            case .low:
+                locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+            case .passive:
+                locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+            }
         } else {
-            locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+            // Fall back to enableHighAccuracy boolean
+            let enableHighAccuracy = options.enableHighAccuracy ?? false
+            if enableHighAccuracy {
+                locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            } else {
+                locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+            }
         }
         
         // Set distance filter

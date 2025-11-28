@@ -121,8 +121,13 @@ class HybridNitroGeolocation: HybridNitroGeolocationSpec {
             return promise
         }
         
-        // Check current authorization status
-        let currentStatus = locationManager.authorizationStatus
+        // Check current authorization status (iOS 13 compatible)
+        let currentStatus: CLAuthorizationStatus
+        if #available(iOS 14.0, *) {
+            currentStatus = locationManager.authorizationStatus
+        } else {
+            currentStatus = CLLocationManager.authorizationStatus()
+        }
         
         switch currentStatus {
         case .authorizedAlways:
@@ -160,6 +165,7 @@ class HybridNitroGeolocation: HybridNitroGeolocationSpec {
     }
     
     private var authorizationDelegate: AuthorizationDelegate?
+    private var authorizationLocationManager: CLLocationManager? // Keep strong reference to prevent deallocation
     
     private func requestAuthorizationInternal(
         level: AuthorizationLevel,
@@ -190,12 +196,14 @@ class HybridNitroGeolocation: HybridNitroGeolocationSpec {
                 promise.resolve(withResult: .denied)
             }
             
-            // Clean up the delegate
+            // Clean up the delegate and location manager references
             self?.authorizationDelegate = nil
+            self?.authorizationLocationManager = nil
         }
         
-        // Keep a strong reference to the delegate
+        // Keep strong references to prevent deallocation before callback
         authorizationDelegate = delegate
+        authorizationLocationManager = locationManager
         locationManager.delegate = delegate
         
         // Request the appropriate authorization
@@ -209,10 +217,13 @@ class HybridNitroGeolocation: HybridNitroGeolocationSpec {
     func getCurrentPosition(options: GeoOptions) throws -> Promise<GeoPosition> {
         log("getCurrentPosition called")
         
-        // Check permissions
+        // Check permissions - return rejected promise with proper error instead of throwing
         if !LocationUtils.hasLocationPermission() {
             log("Location permission not granted")
-            return Promise.rejected(withError: RuntimeError.error(withMessage: "Location permission not granted"))
+            let promise = Promise<GeoPosition>()
+            let error = GeoError(code: .permissionDenied, message: "Location permission not granted. Call requestAuthorization() first.")
+            promise.reject(withError: RuntimeError.error(withMessage: error.message))
+            return promise
         }
         
         let provider = getLocationProvider()

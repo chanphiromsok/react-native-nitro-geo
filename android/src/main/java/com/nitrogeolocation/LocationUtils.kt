@@ -61,7 +61,11 @@ object LocationUtils {
             null
         }
 
-        val mocked = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        // isMock() was added in API 31 (Android S), isFromMockProvider deprecated but still works
+        val mocked = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            location.isMock
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            @Suppress("DEPRECATION")
             location.isFromMockProvider
         } else {
             null
