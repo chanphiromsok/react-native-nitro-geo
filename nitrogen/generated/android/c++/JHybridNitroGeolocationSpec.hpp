@@ -54,6 +54,7 @@ namespace margelo::nitro::nitrogeolocation {
 
   public:
     // Methods
+    std::shared_ptr<Promise<AuthorizationResult>> requestAuthorization(AuthorizationLevel level) override;
     std::shared_ptr<Promise<GeoPosition>> getCurrentPosition(const GeoOptions& options) override;
     void startObserving(const GeoWatchOptions& options) override;
     void stopObserving() override;

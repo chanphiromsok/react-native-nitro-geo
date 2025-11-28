@@ -7,10 +7,14 @@
 
 #include "JHybridNitroGeolocationSpec.hpp"
 
+// Forward declaration of `AuthorizationResult` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AuthorizationResult; }
 // Forward declaration of `GeoPosition` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { struct GeoPosition; }
 // Forward declaration of `GeoCoordinates` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { struct GeoCoordinates; }
+// Forward declaration of `AuthorizationLevel` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AuthorizationLevel; }
 // Forward declaration of `GeoOptions` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { struct GeoOptions; }
 // Forward declaration of `AccuracyAndroid` to properly resolve imports.
@@ -22,14 +26,18 @@ namespace margelo::nitro::nitrogeolocation { struct GeoError; }
 // Forward declaration of `PositionError` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { enum class PositionError; }
 
-#include "GeoPosition.hpp"
+#include "AuthorizationResult.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
+#include "JAuthorizationResult.hpp"
+#include "GeoPosition.hpp"
 #include "JGeoPosition.hpp"
 #include "GeoCoordinates.hpp"
 #include "JGeoCoordinates.hpp"
 #include <optional>
 #include <string>
+#include "AuthorizationLevel.hpp"
+#include "JAuthorizationLevel.hpp"
 #include "GeoOptions.hpp"
 #include "JGeoOptions.hpp"
 #include "AccuracyAndroid.hpp"
@@ -77,6 +85,22 @@ namespace margelo::nitro::nitrogeolocation {
   
 
   // Methods
+  std::shared_ptr<Promise<AuthorizationResult>> JHybridNitroGeolocationSpec::requestAuthorization(AuthorizationLevel level) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JAuthorizationLevel> /* level */)>("requestAuthorization");
+    auto __result = method(_javaPart, JAuthorizationLevel::fromCpp(level));
+    return [&]() {
+      auto __promise = Promise<AuthorizationResult>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JAuthorizationResult>(__boxedResult);
+        __promise->resolve(__result->toCpp());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
   std::shared_ptr<Promise<GeoPosition>> JHybridNitroGeolocationSpec::getCurrentPosition(const GeoOptions& options) {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JGeoOptions> /* options */)>("getCurrentPosition");
     auto __result = method(_javaPart, JGeoOptions::fromCpp(options));

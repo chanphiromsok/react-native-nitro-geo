@@ -13,6 +13,10 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
+// Forward declaration of `AuthorizationResult` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AuthorizationResult; }
+// Forward declaration of `AuthorizationLevel` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AuthorizationLevel; }
 // Forward declaration of `GeoPosition` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { struct GeoPosition; }
 // Forward declaration of `GeoOptions` to properly resolve imports.
@@ -22,8 +26,10 @@ namespace margelo::nitro::nitrogeolocation { struct GeoWatchOptions; }
 // Forward declaration of `GeoError` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { struct GeoError; }
 
-#include "GeoPosition.hpp"
+#include "AuthorizationResult.hpp"
 #include <NitroModules/Promise.hpp>
+#include "AuthorizationLevel.hpp"
+#include "GeoPosition.hpp"
 #include "GeoOptions.hpp"
 #include "GeoWatchOptions.hpp"
 #include <functional>
@@ -60,6 +66,7 @@ namespace margelo::nitro::nitrogeolocation {
 
     public:
       // Methods
+      virtual std::shared_ptr<Promise<AuthorizationResult>> requestAuthorization(AuthorizationLevel level) = 0;
       virtual std::shared_ptr<Promise<GeoPosition>> getCurrentPosition(const GeoOptions& options) = 0;
       virtual void startObserving(const GeoWatchOptions& options) = 0;
       virtual void stopObserving() = 0;

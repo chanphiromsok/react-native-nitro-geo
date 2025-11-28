@@ -10,6 +10,8 @@
 // Forward declarations of C++ defined types
 // Forward declaration of `AccuracyAndroid` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { enum class AccuracyAndroid; }
+// Forward declaration of `AuthorizationResult` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AuthorizationResult; }
 // Forward declaration of `GeoCoordinates` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { struct GeoCoordinates; }
 // Forward declaration of `GeoError` to properly resolve imports.
@@ -27,6 +29,7 @@ namespace NitroGeolocation { class HybridNitroGeolocationSpec_cxx; }
 
 // Include C++ defined types
 #include "AccuracyAndroid.hpp"
+#include "AuthorizationResult.hpp"
 #include "GeoCoordinates.hpp"
 #include "GeoError.hpp"
 #include "GeoPosition.hpp"
@@ -47,6 +50,62 @@ namespace NitroGeolocation { class HybridNitroGeolocationSpec_cxx; }
  */
 namespace margelo::nitro::nitrogeolocation::bridge::swift {
 
+  // pragma MARK: std::shared_ptr<Promise<AuthorizationResult>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<AuthorizationResult>>`.
+   */
+  using std__shared_ptr_Promise_AuthorizationResult__ = std::shared_ptr<Promise<AuthorizationResult>>;
+  inline std::shared_ptr<Promise<AuthorizationResult>> create_std__shared_ptr_Promise_AuthorizationResult__() noexcept {
+    return Promise<AuthorizationResult>::create();
+  }
+  inline PromiseHolder<AuthorizationResult> wrap_std__shared_ptr_Promise_AuthorizationResult__(std::shared_ptr<Promise<AuthorizationResult>> promise) noexcept {
+    return PromiseHolder<AuthorizationResult>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(AuthorizationResult /* result */)>
+  /**
+   * Specialized version of `std::function<void(AuthorizationResult)>`.
+   */
+  using Func_void_AuthorizationResult = std::function<void(AuthorizationResult /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(AuthorizationResult / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_AuthorizationResult_Wrapper final {
+  public:
+    explicit Func_void_AuthorizationResult_Wrapper(std::function<void(AuthorizationResult /* result */)>&& func): _function(std::make_unique<std::function<void(AuthorizationResult /* result */)>>(std::move(func))) {}
+    inline void call(int result) const noexcept {
+      _function->operator()(static_cast<AuthorizationResult>(result));
+    }
+  private:
+    std::unique_ptr<std::function<void(AuthorizationResult /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_AuthorizationResult create_Func_void_AuthorizationResult(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_AuthorizationResult_Wrapper wrap_Func_void_AuthorizationResult(Func_void_AuthorizationResult value) noexcept {
+    return Func_void_AuthorizationResult_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  /**
+   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
+   */
+  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__exception_ptr_Wrapper final {
+  public:
+    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
+    inline void call(std::exception_ptr error) const noexcept {
+      _function->operator()(error);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
+    return Func_void_std__exception_ptr_Wrapper(std::move(value));
+  }
+  
   // pragma MARK: std::optional<double>
   /**
    * Specialized version of `std::optional<double>`.
@@ -126,28 +185,6 @@ namespace margelo::nitro::nitrogeolocation::bridge::swift {
     return Func_void_GeoPosition_Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  /**
-   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
-   */
-  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__exception_ptr_Wrapper final {
-  public:
-    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
-    inline void call(std::exception_ptr error) const noexcept {
-      _function->operator()(error);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
-    return Func_void_std__exception_ptr_Wrapper(std::move(value));
-  }
-  
   // pragma MARK: std::optional<AccuracyAndroid>
   /**
    * Specialized version of `std::optional<AccuracyAndroid>`.
@@ -196,6 +233,15 @@ namespace margelo::nitro::nitrogeolocation::bridge::swift {
   // pragma MARK: std::weak_ptr<HybridNitroGeolocationSpec>
   using std__weak_ptr_HybridNitroGeolocationSpec_ = std::weak_ptr<HybridNitroGeolocationSpec>;
   inline std__weak_ptr_HybridNitroGeolocationSpec_ weakify_std__shared_ptr_HybridNitroGeolocationSpec_(const std::shared_ptr<HybridNitroGeolocationSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<AuthorizationResult>>>
+  using Result_std__shared_ptr_Promise_AuthorizationResult___ = Result<std::shared_ptr<Promise<AuthorizationResult>>>;
+  inline Result_std__shared_ptr_Promise_AuthorizationResult___ create_Result_std__shared_ptr_Promise_AuthorizationResult___(const std::shared_ptr<Promise<AuthorizationResult>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<AuthorizationResult>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_AuthorizationResult___ create_Result_std__shared_ptr_Promise_AuthorizationResult___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<AuthorizationResult>>>::withError(error);
+  }
   
   // pragma MARK: Result<std::shared_ptr<Promise<GeoPosition>>>
   using Result_std__shared_ptr_Promise_GeoPosition___ = Result<std::shared_ptr<Promise<GeoPosition>>>;

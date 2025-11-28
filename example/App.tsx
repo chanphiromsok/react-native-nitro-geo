@@ -43,6 +43,8 @@ function App(): React.JSX.Element {
         console.warn(err);
         return false;
       }
+    } else {
+      await NitroGeolocation.requestAuthorization('whenInUse');
     }
     return true;
   };

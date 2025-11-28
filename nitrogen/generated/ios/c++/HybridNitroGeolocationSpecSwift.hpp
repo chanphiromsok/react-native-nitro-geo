@@ -12,6 +12,10 @@
 // Forward declaration of `HybridNitroGeolocationSpec_cxx` to properly resolve imports.
 namespace NitroGeolocation { class HybridNitroGeolocationSpec_cxx; }
 
+// Forward declaration of `AuthorizationResult` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AuthorizationResult; }
+// Forward declaration of `AuthorizationLevel` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AuthorizationLevel; }
 // Forward declaration of `GeoPosition` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { struct GeoPosition; }
 // Forward declaration of `GeoCoordinates` to properly resolve imports.
@@ -27,8 +31,10 @@ namespace margelo::nitro::nitrogeolocation { struct GeoError; }
 // Forward declaration of `PositionError` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { enum class PositionError; }
 
-#include "GeoPosition.hpp"
+#include "AuthorizationResult.hpp"
 #include <NitroModules/Promise.hpp>
+#include "AuthorizationLevel.hpp"
+#include "GeoPosition.hpp"
 #include "GeoCoordinates.hpp"
 #include <optional>
 #include <string>
@@ -83,6 +89,14 @@ namespace margelo::nitro::nitrogeolocation {
 
   public:
     // Methods
+    inline std::shared_ptr<Promise<AuthorizationResult>> requestAuthorization(AuthorizationLevel level) override {
+      auto __result = _swiftPart.requestAuthorization(static_cast<int>(level));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::shared_ptr<Promise<GeoPosition>> getCurrentPosition(const GeoOptions& options) override {
       auto __result = _swiftPart.getCurrentPosition(std::forward<decltype(options)>(options));
       if (__result.hasError()) [[unlikely]] {

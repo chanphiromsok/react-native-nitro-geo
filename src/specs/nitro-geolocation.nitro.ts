@@ -6,6 +6,16 @@ import { type HybridObject } from 'react-native-nitro-modules'
 export type AccuracyAndroid = 'high' | 'balanced' | 'low' | 'passive'
 
 /**
+ * Authorization level for location permission requests (iOS only)
+ */
+export type AuthorizationLevel = 'always' | 'whenInUse'
+
+/**
+ * Result of location authorization request
+ */
+export type AuthorizationResult = 'disabled' | 'granted' | 'denied' | 'restricted'
+
+/**
  * Error codes for geolocation operations
  */
 export enum PositionError {
@@ -90,6 +100,14 @@ export type ErrorCallback = (error: GeoError) => void
  * Nitro Geolocation Hybrid Object
  */
 export interface NitroGeolocation extends HybridObject<{ ios: 'swift', android: 'kotlin' }> {
+  /**
+   * Request location authorization (iOS only)
+   * On Android, this always resolves with 'granted' as permissions are handled differently
+   * @param level - Authorization level to request: 'whenInUse' or 'always'
+   * @returns Promise with the authorization result
+   */
+  requestAuthorization(level: AuthorizationLevel): Promise<AuthorizationResult>
+
   /**
    * Get the current position
    * @param options - Configuration options for the request

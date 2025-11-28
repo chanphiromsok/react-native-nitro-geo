@@ -14,6 +14,7 @@ namespace margelo::nitro::nitrogeolocation {
     HybridObject::loadHybridMethods();
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
+      prototype.registerHybridMethod("requestAuthorization", &HybridNitroGeolocationSpec::requestAuthorization);
       prototype.registerHybridMethod("getCurrentPosition", &HybridNitroGeolocationSpec::getCurrentPosition);
       prototype.registerHybridMethod("startObserving", &HybridNitroGeolocationSpec::startObserving);
       prototype.registerHybridMethod("stopObserving", &HybridNitroGeolocationSpec::stopObserving);

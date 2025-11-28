@@ -1,10 +1,14 @@
 package com.nitrogeolocation
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.Keep
+import androidx.core.content.ContextCompat
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.core.Promise
@@ -32,6 +36,63 @@ class HybridNitroGeolocation : HybridNitroGeolocationSpec() {
     private var positionListeners: MutableList<(position: GeoPosition) -> Unit> = mutableListOf()
     private var errorListeners: MutableList<(error: GeoError) -> Unit> = mutableListOf()
     private val mainHandler = Handler(Looper.getMainLooper())
+
+    /**
+     * Request location authorization.
+     * On Android, this checks the current permission status.
+     * Note: Actual permission requests must be done through React Native's PermissionsAndroid API
+     * or expo-permissions, as we cannot show permission dialogs from a native module without an Activity.
+     */
+    override fun requestAuthorization(level: AuthorizationLevel): Promise<AuthorizationResult> {
+        return Promise.async {
+            // Check if location services are enabled
+            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                    locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            
+            if (!isLocationEnabled) {
+                return@async AuthorizationResult.DISABLED
+            }
+            
+            // Check permission status based on requested level
+            val hasFineLocation = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+            
+            val hasCoarseLocation = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+            
+            val hasBackgroundLocation = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            } else {
+                // Before Android Q, foreground permission implies background access
+                hasFineLocation || hasCoarseLocation
+            }
+            
+            when (level) {
+                AuthorizationLevel.ALWAYS -> {
+                    if ((hasFineLocation || hasCoarseLocation) && hasBackgroundLocation) {
+                        AuthorizationResult.GRANTED
+                    } else {
+                        AuthorizationResult.DENIED
+                    }
+                }
+                AuthorizationLevel.WHENINUSE -> {
+                    if (hasFineLocation || hasCoarseLocation) {
+                        AuthorizationResult.GRANTED
+                    } else {
+                        AuthorizationResult.DENIED
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Get or create the appropriate location provider based on options

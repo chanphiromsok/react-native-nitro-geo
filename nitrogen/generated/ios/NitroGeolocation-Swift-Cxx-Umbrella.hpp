@@ -10,6 +10,10 @@
 // Forward declarations of C++ defined types
 // Forward declaration of `AccuracyAndroid` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { enum class AccuracyAndroid; }
+// Forward declaration of `AuthorizationLevel` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AuthorizationLevel; }
+// Forward declaration of `AuthorizationResult` to properly resolve imports.
+namespace margelo::nitro::nitrogeolocation { enum class AuthorizationResult; }
 // Forward declaration of `GeoCoordinates` to properly resolve imports.
 namespace margelo::nitro::nitrogeolocation { struct GeoCoordinates; }
 // Forward declaration of `GeoError` to properly resolve imports.
@@ -27,6 +31,8 @@ namespace margelo::nitro::nitrogeolocation { enum class PositionError; }
 
 // Include C++ defined types
 #include "AccuracyAndroid.hpp"
+#include "AuthorizationLevel.hpp"
+#include "AuthorizationResult.hpp"
 #include "GeoCoordinates.hpp"
 #include "GeoError.hpp"
 #include "GeoOptions.hpp"

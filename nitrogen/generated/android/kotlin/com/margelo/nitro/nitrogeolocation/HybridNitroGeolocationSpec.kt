@@ -48,6 +48,10 @@ abstract class HybridNitroGeolocationSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
+  abstract fun requestAuthorization(level: AuthorizationLevel): Promise<AuthorizationResult>
+  
+  @DoNotStrip
+  @Keep
   abstract fun getCurrentPosition(options: GeoOptions): Promise<GeoPosition>
   
   @DoNotStrip

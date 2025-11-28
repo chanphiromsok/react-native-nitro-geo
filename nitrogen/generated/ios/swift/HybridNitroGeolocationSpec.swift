@@ -14,6 +14,7 @@ public protocol HybridNitroGeolocationSpec_protocol: HybridObject {
   
 
   // Methods
+  func requestAuthorization(level: AuthorizationLevel) throws -> Promise<AuthorizationResult>
   func getCurrentPosition(options: GeoOptions) throws -> Promise<GeoPosition>
   func startObserving(options: GeoWatchOptions) throws -> Void
   func stopObserving() throws -> Void

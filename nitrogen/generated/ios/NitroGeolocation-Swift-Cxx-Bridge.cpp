@@ -14,11 +14,11 @@
 
 namespace margelo::nitro::nitrogeolocation::bridge::swift {
 
-  // pragma MARK: std::function<void(const GeoPosition& /* result */)>
-  Func_void_GeoPosition create_Func_void_GeoPosition(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroGeolocation::Func_void_GeoPosition::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const GeoPosition& result) mutable -> void {
-      swiftClosure.call(result);
+  // pragma MARK: std::function<void(AuthorizationResult /* result */)>
+  Func_void_AuthorizationResult create_Func_void_AuthorizationResult(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGeolocation::Func_void_AuthorizationResult::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](AuthorizationResult result) mutable -> void {
+      swiftClosure.call(static_cast<int>(result));
     };
   }
   
@@ -27,6 +27,14 @@ namespace margelo::nitro::nitrogeolocation::bridge::swift {
     auto swiftClosure = NitroGeolocation::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
       swiftClosure.call(error);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const GeoPosition& /* result */)>
+  Func_void_GeoPosition create_Func_void_GeoPosition(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGeolocation::Func_void_GeoPosition::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const GeoPosition& result) mutable -> void {
+      swiftClosure.call(result);
     };
   }
   
